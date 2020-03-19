@@ -1,6 +1,6 @@
 import numpy as np
-from disjoint_set import DisjointSet
-from graph import Graph
+from data_structures.graph import Graph
+from data_structures.disjoint_set import DisjointSet
 
 def karger(G):
     if not isinstance(G, Graph):
@@ -38,5 +38,5 @@ def contract(G):
 
     return cut
 
-G = Graph('example.json')
+G = Graph('examples/example2.json')
 print(karger(G))
