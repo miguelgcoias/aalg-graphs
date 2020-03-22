@@ -1,10 +1,10 @@
 import numpy as np
 
 class DisjointSet:
-    def __init__(self, N):
-        self.N = N
-        self.par = np.arange(N, dtype=np.int64)
-        self.size  = np.ones(N, dtype=np.int64)
+    def __init__(self, n):
+        self.n = n
+        self.par = np.arange(n, dtype=np.int64)
+        self.size = np.ones(n, dtype=np.int64)
 
     def find(self, a):
         if a == self.par[a]:
@@ -17,10 +17,10 @@ class DisjointSet:
         a = self.find(a)
         b = self.find(b)
 
-        if(a == b):
+        if a == b:
             return
 
-        if(self.size[a] > self.size[b]):
+        if self.size[a] > self.size[b]:
             a, b = b, a
 
         self.size[b] += self.size[a]
