@@ -1,6 +1,7 @@
 import numpy as np
-from structs.graph import Graph
 from structs.disjointset import DisjointSet
+from structs.graph import Graph
+
 
 def karger(G):
     num_runs = np.ceil(2 + (G.order() * (G.order() - 1) * 
@@ -13,7 +14,7 @@ def karger(G):
     return min_cut
 
 def contract(G):
-    edges = G.edges()
+    edges = np.array([e for e in G])
     ds = DisjointSet(G.order())
     order = np.random.permutation(G.size())
 
@@ -35,6 +36,3 @@ def contract(G):
             cut += 1
 
     return cut
-
-G = Graph('examples/example2.json')
-print(karger(G))
