@@ -1,7 +1,6 @@
 from json import load
 import numpy as np
 
-
 class Graph:
 
     def __init__(self, path):
@@ -53,6 +52,3 @@ class Graph:
         '''Return number of edges.'''
         # Should this return m/2?
         return self.m
-
-G = Graph('examples/fix.json')
-print('a')
