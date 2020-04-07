@@ -5,7 +5,7 @@ def floyd_warshall(G, weighted=False):
     infinity = np.iinfo(np.int32).max
 
     n = G.order()
-    dist = np.full((n,n), infinity, dtype=np.int64)
+    dist = np.full((n,n), infinity, dtype=np.int32)
 
     for edge in G:
         u, v = edge[:2]
