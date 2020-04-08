@@ -16,5 +16,3 @@ def generate(n, path, density):
 
     with open(path, 'w') as graph:
         dump(adj, graph, indent=4)
-
-generate(10**7, 'examples/fix.json', 5)
