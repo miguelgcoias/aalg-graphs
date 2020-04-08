@@ -5,28 +5,30 @@ import numpy as np
 class Graph:
 
     def __init__(self, path):
-        self.n, self.m, self.adj, self.ind = self.__parse(path)
+        self.n, self.m, self.adj, self.ind, self.wts = self.__parse(path)
 
     @staticmethod
     def __parse(path):
         with open(path) as graph:
-            # Code quality and performance can likely be improved
+            # Code quality and performance can likely be improved. Only supports up to 2**32 - 1 vertices, due to using 32-bit unsigned integers. Should this be changed?
             graph = load(graph)
-            adj = np.array([v for adj in graph.values() for v in adj], dtype='u4')
-            length_sums = np.cumsum(np.array([len(adj) for adj in graph.values()]), dtype='u4')
-            # Use np.concatenate() instead?
-            ind = np.zeros(length_sums.size + 1, dtype='u4')
-            ind[1:] = length_sums
-        return (length_sums.size, adj.size, adj, ind)
+            adj = np.array([v for adj in graph.values() for v in adj[0]], dtype='u4')
+            wts = np.array([w for adj in graph.values() for w in adj[1]], dtype='f8')
+            lensums = np.cumsum(np.array([len(adj[0]) for adj in graph.values()]), dtype='u4')
+            ind = np.concatenate((np.array([0], dtype='u4'), lensums))
+        # Check if methods like Boruvka or Karger-Stein expect the true number of edges or the internal representation adj.size. For now, returns the true number
+        return (lensums.size, int(adj.size/2), adj, ind, wts)
     
     def __iter__(self):
         self.i, self.j = 0, 0
         return self
 
     def __next__(self):
+        # To do: something about weights, read line 52
         if self.i < self.n:
             pairs = self.neighbours(self.i)
             if self.j < pairs.size:
+                # To do: the check below must not be present in Digraph, else the iterator will not return all edges
                 if self.i <= pairs[self.j]:
                     edge = (self.i, pairs[self.j])
                     self.j += 1
@@ -42,8 +44,13 @@ class Graph:
             raise StopIteration
     
     def neighbours(self, v):
-        '''Returns array of neighbours of vertex v.'''
+        '''Returns array of neighbours of vertex v.
+        Expect this function to return garbage if v < 0.'''
         return self.adj[self.ind[v]:self.ind[v + 1]]
+    
+    def weights(self, adj):
+        # Including edge weights on the iterator will break functionality, and if the result from the iterator is stored as a NumPy array, all indices become floating point. This further breaks functionality.
+        return NotImplementedError
 
     def order(self):
         '''Return number of vertices.'''
@@ -51,8 +58,5 @@ class Graph:
 
     def size(self):
         '''Return number of edges.'''
-        # Should this return m/2?
+        # Check comment in line 19
         return self.m
-
-G = Graph('examples/fix.json')
-print('a')
