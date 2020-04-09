@@ -3,8 +3,9 @@ from structs.graph import Graph
 from structs.disjointset import DisjointSet
 
 def boruvka(G):
+    # Boruvka is still broken in its current state. For example, running with 'examples/undirected.json' does not return the full MST
     n, m = G.order(), G.size()
-    edges = G.edges()
+    edges = [e for e in G]
     ds = DisjointSet(n)
 
     ret = np.empty(n, dtype='O')
@@ -36,5 +37,5 @@ def boruvka(G):
                 if ds.find(u) != ds.find(v):
                     ds.union(u, v)
                     components -= 1
-                    ret[components] = edges[idx]
+                    ret[components] = edges[idx]    
         return ret

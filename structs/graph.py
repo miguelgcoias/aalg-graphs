@@ -1,6 +1,7 @@
 from json import load
 import numpy as np
 
+
 class Graph:
 
     def __init__(self, path):
@@ -25,11 +26,11 @@ class Graph:
     def __next__(self):
         # To do: something about weights, read line 52
         if self.i < self.n:
-            pairs = self.neighbours(self.i)
+            pairs, weights = self.neighbours(self.i)
             if self.j < pairs.size:
                 # To do: the check below must not be present in Digraph, else the iterator will not return all edges
                 if self.i <= pairs[self.j]:
-                    edge = (self.i, pairs[self.j])
+                    edge = (self.i, pairs[self.j], weights[self.j])
                     self.j += 1
                     return edge
                 else:
@@ -45,7 +46,7 @@ class Graph:
     def neighbours(self, v):
         '''Returns array of neighbours of vertex v.
         Expect this function to return garbage if v < 0.'''
-        return self.adj[self.ind[v]:self.ind[v + 1]]
+        return (self.adj[self.ind[v]:self.ind[v + 1]], self.wts[self.ind[v]:self.ind[v + 1]])
     
     def weights(self, adj):
         # Including edge weights on the iterator will break functionality, and if the result from the iterator is stored as a NumPy array, all indices become floating point. This further breaks functionality.
