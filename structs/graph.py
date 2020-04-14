@@ -4,20 +4,25 @@ import numpy as np
 
 class Graph:
 
-    def __init__(self, path):
-        self.n, self.m, self.adj, self.ind, self.weights = self._parse(path)
+    def __init__(self, data, fromobject=False):
+        if not fromobject:
+            with open(data) as graphjson:
+                graph = load(graphjson)
+                self.n, self.m, self.adj, self.ind, self.weights = \
+                    self._parse(graph)
+        else:
+            self.n, self.m, self.adj, self.ind, self.weights = self._parse(data)
 
     @staticmethod
-    def _parse(path):
-        with open(path) as graph:
-            # Code quality and performance can likely be improved
-            graph = load(graph)
-            adj = np.array([v for adj in graph.values() for v in adj[0]],
-            dtype='i4')
-            weights = np.array([w for adj in graph.values() for w in adj[1]],
-            dtype='f8')
-            sums = np.cumsum(np.array([adj[0].size for adj in graph.values()]), dtype='i4')
-            ind = np.concatenate((np.array([0], dtype='u4'), sums))
+    def _parse(graph):
+        # Code quality and performance can likely be improved
+        adj = np.array([v for adj in graph.values() for v in adj[0]],
+        dtype='i4')
+        weights = np.array([w for adj in graph.values() for w in adj[1]],
+        dtype='f8')
+        sums = np.cumsum(np.array([len(adj[0]) for adj in graph.values()]), 
+        dtype='i4')
+        ind = np.concatenate((np.array([0], dtype='i4'), sums))
         # Check if methods like Boruvka or Karger-Stein expect the true number
         # of edges or the internal representation adj.size. For now, returns
         # the true number
