@@ -5,30 +5,36 @@ import numpy as np
 class Graph:
 
     def __init__(self, path):
-        self.n, self.m, self.adj, self.ind, self.wts = self.__parse(path)
+        self.n, self.m, self.adj, self.ind, self.weights = self._parse(path)
 
     @staticmethod
-    def __parse(path):
+    def _parse(path):
         with open(path) as graph:
-            # Code quality and performance can likely be improved. Only supports up to 2**32 - 1 vertices, due to using 32-bit unsigned integers. Should this be changed?
+            # Code quality and performance can likely be improved
             graph = load(graph)
-            adj = np.array([v for adj in graph.values() for v in adj[0]], dtype='u4')
-            wts = np.array([w for adj in graph.values() for w in adj[1]], dtype='f8')
-            lensums = np.cumsum(np.array([len(adj[0]) for adj in graph.values()]), dtype='u4')
-            ind = np.concatenate((np.array([0], dtype='u4'), lensums))
-        # Check if methods like Boruvka or Karger-Stein expect the true number of edges or the internal representation adj.size. For now, returns the true number
-        return (lensums.size, int(adj.size/2), adj, ind, wts)
+            adj = np.array([v for adj in graph.values() for v in adj[0]],
+            dtype='i4')
+            weights = np.array([w for adj in graph.values() for w in adj[1]],
+            dtype='f8')
+            sums = np.cumsum(np.array([adj[0].size for adj in graph.values()]), dtype='i4')
+            ind = np.concatenate((np.array([0], dtype='u4'), sums))
+        # Check if methods like Boruvka or Karger-Stein expect the true number
+        # of edges or the internal representation adj.size. For now, returns
+        # the true number
+        return (sums.size, int(adj.size/2), adj, ind, weights)
     
     def __iter__(self):
+        '''Iterating over a graph returns its edges 'partially' ordered, that
+        is, (v, s) will be returned before (v+1, t) independently of how s
+        compares to t, but we don't order the endpoints. To avoid repeats,
+        edges returned are in the format (v, w) where v <= w'''
         self.i, self.j = 0, 0
         return self
 
     def __next__(self):
-        # To do: something about weights, read line 52
         if self.i < self.n:
             pairs, weights = self.neighbours(self.i)
             if self.j < pairs.size:
-                # To do: the check below must not be present in Digraph, else the iterator will not return all edges
                 if self.i <= pairs[self.j]:
                     edge = (self.i, pairs[self.j], weights[self.j])
                     self.j += 1
@@ -46,11 +52,8 @@ class Graph:
     def neighbours(self, v):
         '''Returns array of neighbours of vertex v.
         Expect this function to return garbage if v < 0.'''
-        return (self.adj[self.ind[v]:self.ind[v + 1]], self.wts[self.ind[v]:self.ind[v + 1]])
-    
-    def weights(self, adj):
-        # Including edge weights on the iterator will break functionality, and if the result from the iterator is stored as a NumPy array, all indices become floating point. This further breaks functionality.
-        return NotImplementedError
+        return (self.adj[self.ind[v]:self.ind[v + 1]],
+            self.weights[self.ind[v]:self.ind[v + 1]])
 
     def order(self):
         '''Return number of vertices.'''
@@ -58,5 +61,5 @@ class Graph:
 
     def size(self):
         '''Return number of edges.'''
-        # Check comment in line 19
+        # Check comment on lines 22-24
         return self.m

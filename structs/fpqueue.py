@@ -3,39 +3,32 @@ import numpy as np
 
 class FPQueue:
 
-    def __init__(self, source, neighbours, weights):
-        '''Initialize FPQueue with source vertex and its neighbours.
-        
-        Keyword arguments:
-        source - source vertex
-        neighbours - list of'''
-        self.vertices = [source] + neighbours
-        self.weights = [0] + weights
-        self.preds = [None] + [source for v in neighbours]
+    def __init__(self, source, vertices):
+        self.vertices = np.arange(vertices, dtype='i4')
+        self.weights = np.empty(self.vertices.size, dtype='f8')
+        # Set all weights as infinite
+        self.weights.fill(np.inf)
+        self.preds = np.empty(self.vertices.size, dtype='i4')
+        # Set all predecessors as -1, indicating that there is no predecessor
+        self.preds.fill(-1)
         self.locators = {v: pos for pos, v in enumerate(self.vertices)}
-        self._insheapify()
+        self.update(source, 0, -1)
     
     def _swap(self, v, w):
-        '''Swap positions of two vertices.'''
+        '''Swap vertices v and w.'''
         self.vertices[v], self.vertices[w] = self.vertices[w], self.vertices[v]
         self.weights[v], self.weights[w] = self.weights[w], self.weights[v]
-        self.locators[self.vertices[v]], self.locators[self.vertices[w]] = self.locators[self.vertices[w]], self.locators[self.vertices[v]]
+        self.locators[self.vertices[v]], self.locators[self.vertices[w]] = \
+            self.locators[self.vertices[w]], self.locators[self.vertices[v]]
         self.preds[v], self.preds[w] = self.preds[w], self.preds[v]
     
     def _hasleft(self, ind):
-        return ind * 2 + 1 < len(self.vertices)
+        return ind * 2 + 1 < self.vertices.size
 
     def _hasright(self, ind):
-        return ind * 2 + 2 < len(self.vertices)
-
-    def _insheapify(self):
-        '''Heapify from a provided initial list of vertices.'''
-        start = np.floor((len(self.vertices) - 1) / 2).astype('i4')
-        for v in range(start, -1, -1):
-            self._downheapify(v)
+        return ind * 2 + 2 < self.vertices.size
     
     def _downheapify(self, ind = 0):
-        '''Heapify downwards, starting from ind.'''
         if self._hasleft(ind):
             left = ind * 2 + 1
             minchild = left
@@ -54,31 +47,42 @@ class FPQueue:
             self._upheapify(parent)
     
     def isempty(self):
-        return len(self.vertices) == 0
-
-    def insert(self, vertices, weights, pred):
-        for k in range(len(vertices)):
-            self.vertices.append(vertices[k])
-            self.weights.append(weights[k])
-            self.preds.append(pred)
-            self.locators[vertices[k]] = len(self.vertices) - 1
-            self._upheapify(len(self.vertices) - 1)        
-
-    def min(self):
-        '''Return vertex with minimum weight and its predecessor.'''
-        return (self.vertices[0], self.weights[0], self.preds[0])
+        return self.vertices.size == 0
     
     def pop(self):
-        '''Extract and return vertex with minimum weight and its predecessor.'''
         minimum = (self.vertices[0], self.weights[0], self.preds[0])
-        self._swap(0, len(self.vertices) - 1)
+        self._swap(0, self.vertices.size - 1)
         self.locators.pop(minimum[0])
-        self.vertices, self.weights, self.preds = self.vertices[:-1], self.weights[:-1], self.preds[:-1]
+        self.vertices, self.weights = self.vertices[:-1], self.weights[:-1] 
+        self.preds = self.preds[:-1]
         self._downheapify()
         return minimum
 
     def update(self, vertex, weight, pred):
-        '''Decrease weight and change predecessor of a vertex.'''
         pos = self.locators[vertex]
-        self.weights[pos], self.preds[pos] = weight, pred
-        self._downheapify(pos)
+        self.weights[pos] = weight
+        self.preds[pos] = pred
+        self._upheapify(pos)
+    
+    def get(self, vertex):
+        pos = self.locators[vertex]
+        return (self.vertices[pos], self.weights[pos], self.preds[pos])
+
+    # Deleted useless code:
+
+    # def insert(self, vertices, weights, pred):
+    #     for k in range(len(vertices)):
+    #         self.vertices.append(vertices[k])
+    #         self.weights.append(weights[k])
+    #         self.preds.append(pred)
+    #         self.locators[vertices[k]] = len(self.vertices) - 1
+    #         self._upheapify(len(self.vertices) - 1)
+
+    # def min(self):
+    #     '''Return vertex with minimum weight and its predecessor.'''
+    #     return (self.vertices[0], self.weights[0], self.preds[0])
+
+    # def _insheapify(self):
+    #     start = np.floor((len(self.vertices) - 1) / 2).astype('i4')
+    #     for v in range(start, -1, -1):
+    #         self._downheapify(v)
