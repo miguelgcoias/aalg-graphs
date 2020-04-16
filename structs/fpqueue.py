@@ -8,11 +8,10 @@ class FPQueue:
         self.weights = np.empty(self.vertices.size, dtype='f8')
         # Set all weights as infinite
         self.weights.fill(np.inf)
-        self.preds = np.empty(self.vertices.size, dtype='i4')
-        # Set all predecessors as -1, indicating that there is no predecessor
-        self.preds.fill(-1)
+        # Ability to store multiple predecessors. Much heavier in memory...
+        self.preds = np.empty(self.vertices.size, dtype='O')
         self.locators = {v: pos for pos, v in enumerate(self.vertices)}
-        self.update(source, 0, -1)
+        self.update(source, 0, None)
     
     def _swap(self, v, w):
         '''Swap vertices v and w.'''
@@ -61,28 +60,16 @@ class FPQueue:
     def update(self, vertex, weight, pred):
         pos = self.locators[vertex]
         self.weights[pos] = weight
-        self.preds[pos] = pred
+        if pred is not None:
+            if self.preds[pos] is None:
+                self.preds[pos] = [pred]
+            else:
+                self.preds[pos].append(pred)
         self._upheapify(pos)
     
     def get(self, vertex):
         pos = self.locators[vertex]
         return (self.vertices[pos], self.weights[pos], self.preds[pos])
-
-    # Deleted useless code:
-
-    # def insert(self, vertices, weights, pred):
-    #     for k in range(len(vertices)):
-    #         self.vertices.append(vertices[k])
-    #         self.weights.append(weights[k])
-    #         self.preds.append(pred)
-    #         self.locators[vertices[k]] = len(self.vertices) - 1
-    #         self._upheapify(len(self.vertices) - 1)
-
-    # def min(self):
-    #     '''Return vertex with minimum weight and its predecessor.'''
-    #     return (self.vertices[0], self.weights[0], self.preds[0])
-
-    # def _insheapify(self):
-    #     start = np.floor((len(self.vertices) - 1) / 2).astype('i4')
-    #     for v in range(start, -1, -1):
-    #         self._downheapify(v)
+    
+    def exists(self, vertex):
+        return vertex in self.locators

@@ -6,8 +6,8 @@ def dijkstra(graph, source):
     # Initialize queue with infinite weights, except for source
     fpq = FPQueue(source, graph.order())
 
-    # Initialize shortest-path tree
-    spt = {v: [[], []] for v in range(graph.order())}
+    # Initialize shortest-paths graph
+    paths = {v: [[], []] for v in range(graph.order())}
 
     while not fpq.isempty():
         # Remove from priority queue
@@ -16,21 +16,17 @@ def dijkstra(graph, source):
         # Loop over neighbours of removed root
         vertices, weights = graph.neighbours(u[0])
         for k in range(vertices.size):
-            # The adjacency list of an undirected graph at a vertex may contain
-            # a reference to a vertex that has already been deleted from the
-            # queue
-            try:
+            # Avoid neighbours that have already been removed
+            if fpq.exists(vertices[k]):
                 alt = u[1] + weights[k]
-                if alt < fpq.get(vertices[k])[1]:
+                if alt <= fpq.get(vertices[k])[1]:
                     fpq.update(vertices[k], alt, u[0])
-            except KeyError:
-                continue
         
-        # Add to shortest-path tree. Perhaps do two directed graphs?
-        if u[0] != source:
-            spt[u[0]][0].append(u[2])
-            spt[u[0]][1].append(u[1])
-            spt[u[2]][0].append(u[0])
-            spt[u[2]][1].append(u[1])
+        if u[2] is not None:
+            paths[u[0]][0] = u[2]
+            paths[u[0]][1] = [u[1] for pred in u[2]]
+            for pred in u[2]:
+                paths[pred][0].append(u[0])
+                paths[pred][1].append(u[1])
     
-    return spt
+    return paths
