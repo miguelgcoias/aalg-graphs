@@ -8,7 +8,8 @@ class FPQueue:
         self.weights = np.empty(self.vertices.size, dtype='f8')
         # Set all weights as infinite
         self.weights.fill(np.inf)
-        # Ability to store multiple predecessors. Much heavier in memory...
+        # Ability to store multiple predecessors. Much heavier in memory, since 
+        # arrays must be stored...
         self.preds = np.empty(self.vertices.size, dtype='O')
         self.locators = {v: pos for pos, v in enumerate(self.vertices)}
         self.update(source, 0, None)
@@ -59,12 +60,12 @@ class FPQueue:
 
     def update(self, vertex, weight, pred):
         pos = self.locators[vertex]
-        self.weights[pos] = weight
-        if pred is not None:
-            if self.preds[pos] is None:
+        if weight < self.weights[pos]:
+            self.weights[pos] = weight
+            if pred is not None:
                 self.preds[pos] = [pred]
-            else:
-                self.preds[pos].append(pred)
+        else:
+            self.preds[pos].append(pred)
         self._upheapify(pos)
     
     def get(self, vertex):
