@@ -19,10 +19,17 @@ def bellman_ford(G, source, weighted=False):
                 dist[v] = dist[u] + w
                 pred[v] = u
 
+            if dist[v] + w < dist[u]:
+                dist[u] = dist[v] + w
+                pred[u] = v
+
     for edge in G:
         u, v = edge[:2]
         w = edge[2] if weighted else 1
         if dist[u] + w < dist[v]:
+            raise ValueError("Found negative loop")
+
+        if dist[v] + w < dist[u]:
             raise ValueError("Found negative loop")
 
     return dist, pred
