@@ -1,3 +1,4 @@
+from algs.BFS import BFS
 from algs.bellman_ford import bellman_ford
 
 def average_path_length(graph, algorithm='BFS'):
@@ -7,7 +8,7 @@ def average_path_length(graph, algorithm='BFS'):
     for v in range(n):
         if algorithm == 'Bellman_Ford':
             dist, _ = bellman_ford(graph, v)
-        elif algorithm == 'BFS':
+        else: # algorithm == 'BFS'
             dist, _, _ = BFS(graph, v)
 
         for u in range(v+1, n):
