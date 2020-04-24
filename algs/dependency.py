@@ -1,12 +1,53 @@
 import numpy as np
 
-def dependency(outpaths, sigma, v):
-    '''Recursive dependency function, as defined in U. Brandes' paper 'A Faster 
-    Algorithm for Betweenness Centrality' (2001).'''
-    if outpaths.neighbours(v)[0].size == 0:
-        return 0
-    else:
-        sumdep = 0
-        for w in outpaths.neighbours(v)[0]:
-            sumdep += sigma[v] / sigma[w] * (1 + dependency(outpaths, sigma, w))
-        return sumdep
+from structs.fpqueue import FPQueue
+from structs.stack import Stack
+
+def dependency(graph, s, v):
+    '''Partial implementation of Brandes' algorithm. Does not compute the 
+    betweenness centrality, since that would involve iterating over all 
+    vertices of the graph -- this partial version does one iteration of 
+    Brandes' algorithm.'''
+    # Initialize queue with infinite weights, except for source
+    PQ = FPQueue(s, graph.order())
+
+    # Initialize stack
+    S = Stack()
+
+    # Maintain number of shortest paths from source to all vertices
+    sigma = np.zeros(graph.order(), dtype='u4')
+    sigma[s] = 1
+
+    # Dependency scores
+    delta = np.zeros(graph.order(), dtype='f8')
+
+    # Dijkstra's algorithm
+    while not PQ.isempty():
+        # Remove from priority queue
+        (vertex, weight, preds) = PQ.pop()
+
+        # Add to stack
+        S.push((vertex, preds))
+
+        if preds is not None:
+            for pred in preds:
+                # Combinatorial path counting lemma
+                sigma[vertex] += sigma[pred]
+
+        neighbours, weights = graph.neighbours(vertex)
+        for k in range(neighbours.size):
+            # Avoid neighbours that have already been removed
+            if PQ.exists(neighbours[k]):
+                alt = weight + weights[k]
+                if alt <= PQ.get(neighbours[k])[1]:
+                    PQ.update(neighbours[k], alt, vertex)
+
+    while not S.isempty():
+        # Remove from stack
+        (vertex, preds) = S.pop()
+
+        if preds is not None:
+            for pred in preds:
+                delta[pred] += sigma[pred] / sigma[vertex] * (1 + delta[vertex])
+    
+    return delta[v]
