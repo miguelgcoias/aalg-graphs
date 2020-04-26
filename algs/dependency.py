@@ -1,7 +1,8 @@
 import numpy as np
 
-from structs.fpqueue import FPQueue
+from structs.pqueue import PQueue
 from structs.stack import Stack
+
 
 def dependency(graph, s, v):
     '''Partial implementation of Brandes' algorithm. Does not compute the 
@@ -9,7 +10,7 @@ def dependency(graph, s, v):
     vertices of the graph -- this partial version does one iteration of 
     Brandes' algorithm.'''
     # Initialize queue with infinite weights, except for source
-    PQ = FPQueue(s, graph.order())
+    PQ = PQueue(s, graph.order())
 
     # Initialize stack
     S = Stack()

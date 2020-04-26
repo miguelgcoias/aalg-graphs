@@ -1,26 +1,27 @@
 import numpy as np
 
 
-class FPQueue:
+class PQueue:
 
     def __init__(self, source, vertices):
-        self.vertices = np.arange(vertices, dtype='i4')
+        '''Priority queue using a binary heap. Designed specifically for 
+        Dijkstra's algorithm and not adequate for other uses.'''
+        self.vertices = np.arange(vertices, dtype='u4')
         self.weights = np.empty(self.vertices.size, dtype='f8')
-        # Set all weights as infinite
         self.weights.fill(np.inf)
-        # Ability to store multiple predecessors. Much heavier in memory, since 
-        # arrays must be stored...
         self.preds = np.empty(self.vertices.size, dtype='O')
-        self.locators = {v: pos for pos, v in enumerate(self.vertices)}
+        # Think of a better solution for this
+        self.loc = {v: pos for pos, v in enumerate(self.vertices)}
         self.update(source, 0, None)
     
-    def _swap(self, v, w):
-        '''Swap vertices v and w.'''
-        self.vertices[v], self.vertices[w] = self.vertices[w], self.vertices[v]
-        self.weights[v], self.weights[w] = self.weights[w], self.weights[v]
-        self.locators[self.vertices[v]], self.locators[self.vertices[w]] = \
-            self.locators[self.vertices[w]], self.locators[self.vertices[v]]
-        self.preds[v], self.preds[w] = self.preds[w], self.preds[v]
+    def _swap(self, indv, indw):
+        self.vertices[indv], self.vertices[indw] = self.vertices[indw], \
+            self.vertices[indv]
+        self.weights[indv], self.weights[indw] = self.weights[indw], \
+            self.weights[indv]
+        self.loc[self.vertices[indv]], self.loc[self.vertices[indw]] = \
+            self.loc[self.vertices[indw]], self.loc[self.vertices[indv]]
+        self.preds[indv], self.preds[indw] = self.preds[indw], self.preds[indv]
     
     def _hasleft(self, ind):
         return ind * 2 + 1 < self.vertices.size
@@ -52,14 +53,14 @@ class FPQueue:
     def pop(self):
         minimum = (self.vertices[0], self.weights[0], self.preds[0])
         self._swap(0, self.vertices.size - 1)
-        self.locators.pop(minimum[0])
+        self.loc.pop(minimum[0])
         self.vertices, self.weights = self.vertices[:-1], self.weights[:-1] 
         self.preds = self.preds[:-1]
         self._downheapify()
         return minimum
 
     def update(self, vertex, weight, pred):
-        pos = self.locators[vertex]
+        pos = self.loc[vertex]
         if weight < self.weights[pos]:
             self.weights[pos] = weight
             if pred is not None:
@@ -69,8 +70,8 @@ class FPQueue:
         self._upheapify(pos)
     
     def get(self, vertex):
-        pos = self.locators[vertex]
+        pos = self.loc[vertex]
         return (self.vertices[pos], self.weights[pos], self.preds[pos])
     
     def exists(self, vertex):
-        return vertex in self.locators
+        return vertex in self.loc
