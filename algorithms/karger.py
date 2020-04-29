@@ -2,7 +2,6 @@ import numpy as np
 from structs.disjointset import DisjointSet
 from structs.graph import Graph
 
-
 def karger(G):
     num_runs = np.ceil(2 + (G.order() * (G.order() - 1) * 
     np.log2(G.order())) / 2).astype(np.int64)

@@ -1,5 +1,4 @@
 import numpy as np
-from structs.graph import Graph
 
 def BFS(graph, source):
     infinity = np.iinfo(np.int32).max
