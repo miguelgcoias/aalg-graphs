@@ -1,10 +1,9 @@
 import numpy as np
-from structs.graph import Graph
 
-def bellman_ford(G, source, weighted=False):
+def bellman_ford(graph, source, weighted=False):
     infinity = np.iinfo(np.int32).max
 
-    n = G.order()
+    n = graph.order()
     dist = np.full(n, infinity, dtype=np.int32)
     pred = np.full(n, infinity, dtype=np.int32)
 
@@ -12,7 +11,7 @@ def bellman_ford(G, source, weighted=False):
     pred[source] = source
 
     for i in range(n-1):
-        for edge in G:
+        for edge in graph:
             u, v = edge[:2]
             w = edge[2] if weighted else 1
             if dist[u] + w < dist[v]:
@@ -23,7 +22,7 @@ def bellman_ford(G, source, weighted=False):
                 dist[u] = dist[v] + w
                 pred[u] = v
 
-    for edge in G:
+    for edge in graph:
         u, v = edge[:2]
         w = edge[2] if weighted else 1
         if dist[u] + w < dist[v]:

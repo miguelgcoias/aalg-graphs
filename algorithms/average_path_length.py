@@ -1,5 +1,5 @@
-from algs.BFS import BFS
-from algs.bellman_ford import bellman_ford
+from algorithms.BFS import BFS
+from algorithms.bellman_ford import bellman_ford
 
 def average_path_length(graph, algorithm='BFS'):
     n = graph.order()
