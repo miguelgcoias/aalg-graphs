@@ -10,6 +10,7 @@ def average_path_length(graph, algorithm='BFS'):
             dist, _ = bellman_ford(graph, v)
         else: # algorithm == 'BFS'
             dist, _, _ = BFS(graph, v)
+            # TODO find infinite
 
         for u in range(v+1, n):
             ret += dist[u]

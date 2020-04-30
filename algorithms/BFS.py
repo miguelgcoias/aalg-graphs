@@ -10,7 +10,9 @@ def BFS(graph, source):
 
     dist[source] = 0
     pred[source] = source
+
     order[0] = source
+    order[n-1] = -1
 
     waiting_beginning = 0
     waiting_end = 0
