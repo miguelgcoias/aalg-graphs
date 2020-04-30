@@ -6,7 +6,13 @@ from algs.dependency import dependency
 
 def mhbc(graph, r, t):
     '''Metropolis-Hastings type algorithm to compute betweenness centrality of 
-    vertex r.'''
+    vertex r. Read 'Metropolis-Hastings Algorithms for Estimating Betweenness 
+    Centrality in Large Networks' by Chehreghani, Abdessalem and Bifet for more 
+    details, or our report.
+    
+    Keyword arguments:
+    r -- vertex to find betweenness centrality
+    t -- number of iterations'''
     # Betweenness centrality of r
     cb = 0
 

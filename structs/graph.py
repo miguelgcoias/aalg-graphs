@@ -5,18 +5,33 @@ import numpy as np
 
 class Graph:
 
-    def __init__(self, data, fromobject=False):
-        if not fromobject:
-            with open(data) as graphjson:
-                graph = load(graphjson)
+    def __init__(self, data):
+        '''Static sparse graph class constructor. Allows reading from a JSON 
+        file or from a dictionary object mimicking the structure of a loaded 
+        JSON file.
+        
+        Keyword arguments:
+        data -- path to JSON file, or dictionary object as described above'''
+        try:
+            if isinstance(data, str):
+                with open(data) as graph_json:
+                    graph = load(graph_json)
+                    self.n, self.m, self.adj, self.ind, self.weights = \
+                        self._parse(graph)
+                    self.m = int(self.m/2)
+            elif isinstance(data, dict):
                 self.n, self.m, self.adj, self.ind, self.weights = \
-                    self._parse(graph)
-        else:
-            self.n, self.m, self.adj, self.ind, self.weights = self._parse(data)
+                    self._parse(data)
+                self.m = int(self.m/2)
+            else:
+                raise RuntimeError('Invalid input')
+        except RuntimeError:
+            raise
+
 
     @staticmethod
     def _parse(graph):
-        # Code quality and performance can likely be improved
+        # Performance can likely be improved. Do further testing
         adj = np.array([v for adj in graph.values() for v in adj[0]],
         dtype='i4')
         weights = np.array([w for adj in graph.values() for w in adj[1]],
@@ -24,10 +39,7 @@ class Graph:
         sums = np.cumsum(np.array([len(adj[0]) for adj in graph.values()]), 
         dtype='i4')
         ind = np.concatenate((np.array([0], dtype='i4'), sums))
-        # Check if methods like Boruvka or Karger-Stein expect the true number
-        # of edges or the internal representation adj.size. For now, returns
-        # the true number
-        return (sums.size, int(adj.size/2), adj, ind, weights)
+        return (sums.size, adj.size, adj, ind, weights)
     
     def __iter__(self):
         '''Iterating over a graph returns its edges 'partially' ordered, that
