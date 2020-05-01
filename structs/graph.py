@@ -33,12 +33,12 @@ class Graph:
     def _parse(graph):
         # Performance can likely be improved. Do further testing
         adj = np.array([v for adj in graph.values() for v in adj[0]],
-        dtype='i4')
+        dtype='u4')
         weights = np.array([w for adj in graph.values() for w in adj[1]],
         dtype='f8')
         sums = np.cumsum(np.array([len(adj[0]) for adj in graph.values()]), 
-        dtype='i4')
-        ind = np.concatenate((np.array([0], dtype='i4'), sums))
+        dtype='u4')
+        ind = np.concatenate((np.array([0], dtype='u4'), sums))
         return (sums.size, adj.size, adj, ind, weights)
     
     def __iter__(self):
@@ -70,8 +70,8 @@ class Graph:
     def neighbours(self, v):
         '''Returns array of neighbours of vertex v.
         Expect this function to return garbage if v < 0.'''
-        return (self.adj[self.ind[v]:self.ind[v + 1]],
-            self.weights[self.ind[v]:self.ind[v + 1]])
+        inds = slice(self.ind[v], self.ind[v+1])
+        return (self.adj[inds], self.weights[inds])
 
     def order(self):
         '''Return number of vertices.'''
