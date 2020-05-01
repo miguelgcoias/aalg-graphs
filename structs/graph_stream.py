@@ -1,9 +1,10 @@
 import numpy as np
+from structs.disjointset import DisjointSet
 
 class GraphStream:
     def __init__(self, path):
-        self.graph = open(path)
-        self.n = int(self.graph.readline())
+        self.path = path
+        self.open()
 
     def __iter__(self):
         return self
@@ -19,3 +20,25 @@ class GraphStream:
     def order(self):
         ''' Return number of vertices '''
         return self.n
+
+    # Resets iterators
+    def is_connected(self):
+        self.open()
+        ds = DisjointSet(self.n)
+
+        components = self.n
+        for edge in self:
+            u, v = edge[:2]
+            if ds.find(u) != ds.find(v):
+                ds.union(u, v)
+                components -= 1
+
+        self.close()
+        return components == 1
+
+    def open(self):
+        self.graph = open(self.path)
+        self.n = int(self.graph.readline())
+
+    def close(self):
+        self.graph.close()
