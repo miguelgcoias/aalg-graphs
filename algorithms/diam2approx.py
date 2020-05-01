@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.random import default_rng
 
-from algorithms.alternative_bfs import alternative_bfs
+from algorithms.altbfs import altbfs
 
 
 def diam2approx(graph):
@@ -11,7 +11,7 @@ def diam2approx(graph):
 
     # Run BFS for a random vertex, and subtract 1 from depth array to obtain 
     # length of path
-    dist = alternative_bfs(graph, v)[0] - 1
+    dist = altbfs(graph, v)[0]
 
     # Maximum distance
     highest = np.amax(dist)

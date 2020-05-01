@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.random import default_rng
 
-from algorithms.alternative_bfs import alternative_bfs
+from algorithms.altbfs import altbfs
 from algorithms.diam2approx import diam2approx
 
 
@@ -26,7 +26,7 @@ def vcbc(graph, epsilon, delta):
         while u == v:
             u, v = rng.integers(graph.order(), size=2)
         
-        _, preds, sigma = alternative_bfs(graph, u, v)
+        _, preds, sigma = altbfs(graph, u, v)
 
         # Inner loop variable
         t = v
