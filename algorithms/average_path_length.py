@@ -27,8 +27,8 @@ def average_path_length(graph, algorithm='BFS'):
 def approximate_distance_sum(graph, hash_functions):
     n = graph.order()
     k = len(hash_functions)
-    m = math.ceil(math.log2(n)) + 1
-    max_zeros = math.ceil(math.log2(m))
+    m = np.int64(2 ** 32)
+    max_zeros = 32
 
     r = np.zeros((n, k), dtype=np.int64)
     neighbours = np.zeros(n, dtype=np.int64)
@@ -40,13 +40,12 @@ def approximate_distance_sum(graph, hash_functions):
             r[v][idx] = max(r[v][idx], tail_length(h(u, m), max_zeros))
 
     for u in range(n):
+        tmp = np.double(0)
         for idx in range(k):
-            neighbours[u] += r[u][idx]
-        neighbours[u] /= k
+            tmp += r[u][idx]
+        tmp /= k
 
-    for u in range(n):
-        neighbours[u] = 2 ** neighbours[u]
-
+        neighbours[u] = 2 ** tmp
     return neighbours
 
 def tail_length(x, m):
