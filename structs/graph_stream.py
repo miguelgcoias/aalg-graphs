@@ -18,8 +18,10 @@ class GraphStream:
             raise StopIteration
     
     def order(self):
-        ''' Return number of vertices '''
         return self.n
+
+    def size(self):
+        return self.m
 
     # Resets iterators
     def is_connected(self):
@@ -38,7 +40,7 @@ class GraphStream:
 
     def open(self):
         self.graph = open(self.path)
-        self.n = int(self.graph.readline())
+        self.n, self.m = [int(x) for x in self.graph.readline().split()]
 
     def close(self):
         self.graph.close()
