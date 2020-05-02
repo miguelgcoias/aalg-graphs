@@ -14,19 +14,16 @@ class Digraph(Graph):
         
         Keyword arguments:
         data -- path to JSON file, or dictionary object as described above'''
-        try:
-            if isinstance(data, str):
-                with open(data) as graph_json:
-                    graph = load(graph_json)
-                    self.n, self.m, self.adj, self.ind, self.weights = \
-                        super()._parse(graph)
-            elif isinstance(data, dict):
+        if isinstance(data, str):
+            with open(data) as graph_json:
+                graph = load(graph_json)
                 self.n, self.m, self.adj, self.ind, self.weights = \
-                    super()._parse(data)
-            else:
-                raise RuntimeError('Invalid input')
-        except RuntimeError:
-            raise
+                    super()._parse(graph)
+        elif isinstance(data, dict):
+            self.n, self.m, self.adj, self.ind, self.weights = \
+                super()._parse(data)
+        else:
+            raise RuntimeError('Invalid input')
 
     def __next__(self):
         if self.i < self.n:

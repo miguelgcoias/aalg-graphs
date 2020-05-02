@@ -23,16 +23,19 @@ def altbfs(graph, source, target=None):
     sigma[source] = 1
 
     # Store parents of computed vertices
-    parents = {v: [] for v in range(graph.order())}
+    # parents = {v: None for v in range(graph.order())}
+    parents = np.empty(graph.order(), dtype='O')
 
     Q = Queue()
     Q.enqueue(source)
+    parents[source] = []
 
     while not Q.isempty():
         u = Q.dequeue()
         d = dist[u] + 1
         neighbours, _ = graph.neighbours(u)
 
+        # Vectorizing this results in much worse performance
         for parent in parents[u]:
             sigma[u] += sigma[parent]
 

@@ -12,21 +12,18 @@ class Graph:
         
         Keyword arguments:
         data -- path to JSON file, or dictionary object as described above'''
-        try:
-            if isinstance(data, str):
-                with open(data) as graph_json:
-                    graph = load(graph_json)
-                    self.n, self.m, self.adj, self.ind, self.weights = \
-                        self._parse(graph)
-                    self.m = int(self.m/2)
-            elif isinstance(data, dict):
+        if isinstance(data, str):
+            with open(data) as graph_json:
+                graph = load(graph_json)
                 self.n, self.m, self.adj, self.ind, self.weights = \
-                    self._parse(data)
+                    self._parse(graph)
                 self.m = int(self.m/2)
-            else:
-                raise RuntimeError('Invalid input')
-        except RuntimeError:
-            raise
+        elif isinstance(data, dict):
+            self.n, self.m, self.adj, self.ind, self.weights = \
+                self._parse(data)
+            self.m = int(self.m/2)
+        else:
+            raise RuntimeError('Invalid input')
 
 
     @staticmethod
@@ -42,10 +39,10 @@ class Graph:
         return (sums.size, adj.size, adj, ind, weights)
     
     def __iter__(self):
-        '''Iterating over a graph returns its edges 'partially' ordered, that
-        is, (v, s) will be returned before (v+1, t) independently of how s
-        compares to t, but we don't order the endpoints. To avoid repeats,
-        edges returned are in the format (v, w) where v <= w'''
+        # Iterating over a graph returns its edges 'partially' ordered, that
+        # is, (v, s) will be returned before (v+1, t) independently of how s
+        # compares to t, but we don't order the endpoints. To avoid repeats,
+        # edges returned are in the format (v, w) where v <= w'''
         self.i, self.j = 0, 0
         return self
 
@@ -70,7 +67,7 @@ class Graph:
     def neighbours(self, v):
         '''Returns array of neighbours of vertex v.
         Expect this function to return garbage if v < 0.'''
-        inds = slice(self.ind[v], self.ind[v+1])
+        inds = slice(self.ind[v], self.ind[v + 1])
         return (self.adj[inds], self.weights[inds])
 
     def order(self):

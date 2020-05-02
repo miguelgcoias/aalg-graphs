@@ -21,4 +21,4 @@ def diam2approx(graph):
         return highest * 2
     else:
         # Maximum multiplied by second highest value
-        return highest + np.amax((dist != np.amax(dist)) * dist)
+        return highest + np.amax(dist[dist != np.amax(dist)])
