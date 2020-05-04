@@ -68,7 +68,7 @@ class Graph:
         '''Returns array of neighbours of vertex v.
         Expect this function to return garbage if v < 0.'''
         inds = slice(self.ind[v], self.ind[v + 1])
-        return (self.adj[inds], self.weights[inds])
+        return self.adj[inds], self.weights[inds]
 
     def order(self):
         '''Return number of vertices.'''
@@ -76,5 +76,4 @@ class Graph:
 
     def size(self):
         '''Return number of edges.'''
-        # Check comment on lines 22-24
         return self.m
