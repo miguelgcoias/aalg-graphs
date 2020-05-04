@@ -19,7 +19,7 @@ def vcbc(graph, epsilon, delta):
     # Setup random number generator
     rng = default_rng()
 
-    for i in range(r.astype(int)):
+    for _ in range(r.astype(int)):
         # Random endpoints
         u, v = rng.choice(graph.order(), size=2, replace=False, shuffle=False)
         
@@ -32,7 +32,7 @@ def vcbc(graph, epsilon, delta):
             prob = [sigma[k]/sigma[t] for k in preds[t]]
             z = rng.choice(preds[t], p=prob)
             if z != u:
-                bc[z] += 1/r
+                bc[z] += r**(-1)
             t = z
         
     return bc
