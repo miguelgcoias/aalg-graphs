@@ -8,7 +8,7 @@ def altbfs(graph, source, target=None):
     the existence of multiple shortest paths between two vertices.
     
     Keyword arguments:
-    graph -- Graph object
+    graph -- Graph or Digraph object
     source -- source vertex
     target -- stop searching once target is reached. Default is None, in which 
     case the algorithm runs on the entire graph'''
@@ -25,9 +25,8 @@ def altbfs(graph, source, target=None):
     # Store parents of computed vertices
     parents = np.empty(graph.order(), dtype='O')
 
-    # Using a queue is not very desirable due to the high number of calls made 
-    # to it, but this is the last of all performance related problems we need 
-    # to solve
+    # Using a queue is not very desirable due to the high number of calls 
+    # needed, but this is the last of all performance problems we need to solve
     Q = Queue()
     Q.enqueue(source)
     parents[source] = []
@@ -35,8 +34,9 @@ def altbfs(graph, source, target=None):
     while not Q.isempty():
         u = Q.dequeue()
         d = dist[u] + 1
-        neighbours, _ = graph.neighbours(u)
+        neighbours = graph.neighbours(u)
 
+        # Vectorizing this results in worse performance
         for parent in parents[u]:
             sigma[u] += sigma[parent]
 
