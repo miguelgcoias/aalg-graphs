@@ -7,10 +7,7 @@ class Stack:
         self.contents.append(v)
 
     def pop(self):
-        # Redo this method if Stack is used somewhere in the future
-        head = self.contents[-1]
-        self.contents = self.contents[:-1]
-        return head
+        return self.contents.pop(-1)
     
     def isempty(self):
         return len(self.contents) == 0

@@ -24,12 +24,12 @@ def altbfs(graph, source, target=None):
 
     # Store parents of computed vertices
     parents = np.empty(graph.order(), dtype='O')
+    parents[source] = []
 
     # Using a queue is not very desirable due to the high number of calls 
     # needed, but this is the last of all performance problems we need to solve
     Q = Queue()
     Q.enqueue(source)
-    parents[source] = []
 
     while not Q.isempty():
         u = Q.dequeue()
@@ -53,4 +53,4 @@ def altbfs(graph, source, target=None):
             else:
                 parents[neighbour].append(u)
     
-    return (dist, parents, sigma)
+    return dist, parents, sigma

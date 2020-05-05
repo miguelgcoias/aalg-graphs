@@ -5,12 +5,15 @@ class PQueue:
 
     def __init__(self, source, vertices):
         '''Priority queue using a binary heap. Designed specifically for 
-        Dijkstra's algorithm and not adequate for other uses.'''
+        usage with Dijkstra's algorithm, not adequate for other uses.
+        
+        Keyword arguments:
+        source -- source vertex
+        vertices -- number of vertices of the graph'''
         self.vertices = np.arange(vertices, dtype='u4')
         self.weights = np.empty(self.vertices.size, dtype='f8')
         self.weights.fill(np.inf)
         self.preds = np.empty(self.vertices.size, dtype='O')
-        # Think of a better solution for this
         self.loc = {v: pos for pos, v in enumerate(self.vertices)}
         self.update(source, 0, None)
     
