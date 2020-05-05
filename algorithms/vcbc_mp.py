@@ -17,7 +17,8 @@ def vcbc_mp(graph, epsilon, delta, procs_multiplier=1):
     graph -- Graph or Digraph object
     epsilon -- bound to the quality of the approximation, related to delta
     delta -- bound to the quality of the approximation, related to epsilon
-    procs_multiplier -- multiplier on the number of processes to use. Number of processes is given by procs_multiplier * mp.cpu_count()'''
+    procs_multiplier -- multiplier on the number of processes to use. Number of 
+    processes is given by procs_multiplier * mp.cpu_count()'''
     # Diameter 2-approximation
     diam = diam2approx(graph)
 
@@ -30,7 +31,7 @@ def vcbc_mp(graph, epsilon, delta, procs_multiplier=1):
     bc = manager.Array('d', np.zeros(graph.order(), dtype='f8'))
 
     # Execute with multiple processes
-    procs = mp.cpu_count() * 2
+    procs = mp.cpu_count() * procs_multiplier
     with mp.Pool(processes=procs) as pool:
         for _ in range(np.ceil(r/procs).astype(int)):
             pool.starmap(mpcompute, procs * [(graph, bc, r)])
