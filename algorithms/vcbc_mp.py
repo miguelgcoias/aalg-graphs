@@ -23,24 +23,24 @@ def vcbc_mp(graph, epsilon, delta, procs_multiplier=1):
     diam = diam2approx(graph)
 
     # Number of iterations
-    r = 0.5/epsilon**2 * (np.floor(np.log2(diam - 2)) + 1 - np.log(delta))
+    r = np.ceil(0.5/epsilon**2 * (np.floor(np.log2(diam - 2)) + 1 - np.log(delta)))
 
     # To share the bc array between processes, it cannot be a NumPy array (as 
     # far as we know, at least)
     manager = mp.Manager()
+    # If your venv has pylint, the following line may present a ficticious 
+    # problem. Read https://github.com/PyCQA/pylint/issues/3313
+    lock = manager.Lock()
     bc = manager.Array('d', np.zeros(graph.order(), dtype='f8'))
 
     # Execute with multiple processes
     procs = mp.cpu_count() * procs_multiplier
     with mp.Pool(processes=procs) as pool:
-        for _ in range(np.ceil(r/procs).astype(int)):
-            pool.starmap(mpcompute, procs * [(graph, bc, r)])
-        pool.close()
-        pool.join()
+        pool.starmap(mpcompute, r.astype(int) * [(bc, lock, graph, r)])
 
     return np.array(bc, dtype='f8')
 
-def mpcompute(graph, bc, r):
+def mpcompute(bc, lock, graph, r):
     # Randomly select two distinct vertices
     rng = default_rng()
     u, v = rng.choice(graph.order(), size=2, replace=False, shuffle=False)
@@ -51,5 +51,6 @@ def mpcompute(graph, bc, r):
         prob = [sigma[k]/sigma[t] for k in preds[t]]
         z = rng.choice(preds[t], p=prob)
         if z != u:
-            bc[z] += r**(-1)
+            with lock:
+                bc[z] += r**(-1)
         t = z
