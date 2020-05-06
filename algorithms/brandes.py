@@ -77,14 +77,13 @@ def mpcompute(bc, lock, graph, source):
     
     # Store dependency scores
     delta = np.zeros(graph.order(), dtype='f8')
-    bc_current = np.zeros(graph.order(), dtype='f8')
     
     while not S.isempty():
         v = S.pop()
         for p in parents[v]:
             delta[p] += sigma[p] / sigma[v] * (1 + delta[v])
         if v != source:
-            bc_current[v] += delta[v]
-    
-    with lock:
-        bc += bc_current
+            # Terrible performance...
+            with lock:
+                bc[v] += delta[v]
+
