@@ -1,17 +1,20 @@
 import math
-import numpy as np
-from algorithms.BFS import BFS
-from algorithms.bellman_ford import bellman_ford
 
-def average_path_length(graph, algorithm='BFS'):
+import numpy as np
+
+from algorithms.bellman_ford import bellman_ford
+from algorithms.bfs import bfs
+
+
+def average_path_length(graph, algorithm='bfs'):
     n = graph.order()
 
     ret = 0
     for v in range(n):
         if algorithm == 'Bellman_Ford':
             dist, _ = bellman_ford(graph, v)
-        else: # algorithm == 'BFS'
-            dist, _, _ = BFS(graph, v)
+        else: # algorithm == 'bfs'
+            dist, _, _ = bfs(graph, v)
             # TODO find infinite
 
         for u in range(v+1, n):

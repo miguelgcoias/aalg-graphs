@@ -61,6 +61,9 @@ class WeightedGraph(Graph):
             raise StopIteration
     
     def neighbours(self, v):
-        '''Returns array of neighbours of vertex v.'''
+        '''Returns array of neighbours of v and their weights.
+        
+        Keyword arguments:
+        v -- vertex to find neighbours of'''
         inds = slice(self.ind[v], self.ind[v + 1])
         return self.adj[inds], self.weights[inds]

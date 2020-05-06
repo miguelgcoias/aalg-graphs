@@ -1,6 +1,7 @@
 import numpy as np
 
-def BFS(graph, source):
+
+def bfs(graph, source):
     infinity = np.iinfo(np.int32).max
 
     n = graph.order()
@@ -19,7 +20,7 @@ def BFS(graph, source):
 
     while waiting_beginning <= waiting_end:
         v = order[waiting_beginning]
-        neighbours = graph.neighbours(v)[0]
+        neighbours = graph.neighbours(v)
 
         for u in neighbours:
             if dist[u] == infinity:

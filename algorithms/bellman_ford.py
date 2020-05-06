@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def bellman_ford(graph, source, weighted=False):
     infinity = np.iinfo(np.int32).max
 
@@ -10,7 +11,7 @@ def bellman_ford(graph, source, weighted=False):
     dist[source] = 0
     pred[source] = source
 
-    for i in range(n-1):
+    for _ in range(n-1):
         for edge in graph:
             u, v = edge[:2]
             w = edge[2] if weighted else 1

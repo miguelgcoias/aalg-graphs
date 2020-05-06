@@ -5,7 +5,8 @@ from structs.digraph import Digraph
 
 
 def dijkstra(graph, source, target=None):
-    '''Standard implementation of Dijkstra's algorithm using a priority queue.
+    '''Standard implementation of Dijkstra's algorithm using a priority queue. 
+    Not optimized, but works.
     
     Keyword arguments:
     graph -- WeightedGraph or WeightedDigraph object

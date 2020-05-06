@@ -1,10 +1,11 @@
 import os
 import sys
+
 import numpy as np
 
-from structs.graph import Graph
-from benchmark.utils import plot, measure
 from algorithms.average_path_length import average_path_length
+from benchmark.utils import measure, plot
+from structs.graph import Graph
 
 # Set arguments
 args = {'ylabel': 'Runtime (s)',
@@ -19,7 +20,7 @@ for g in os.listdir('./examples'):
 num_graphs = len(graph_paths)
 sizes = np.empty(num_graphs, dtype=np.int64)
 times = np.empty(num_graphs, dtype=np.double)
-apl = lambda g: average_path_length(g, algorithm="BFS")
+apl = lambda g: average_path_length(g, algorithm="bfs")
 n_runs, n_repeats = int(sys.argv[1]), int(sys.argv[2])
 
 # Run the algorithm

@@ -1,9 +1,9 @@
 import numpy as np
 
-from structs.queue import Queue
+from collections import deque
 
 
-def altbfs(graph, source, target=None):
+def bfs_mpaths(graph, source, target=None):
     '''Alternative breadth-first search implementation that takes into account 
     the existence of multiple shortest paths between two vertices.
     
@@ -26,15 +26,14 @@ def altbfs(graph, source, target=None):
     parents = np.empty(graph.order(), dtype='O')
     parents[source] = []
 
-    # Using a queue is not very desirable due to the high number of calls 
-    # needed, but this is the last of all performance problems we need to solve
-    Q = Queue()
-    Q.enqueue(source)
+    Q = deque([source])
 
-    while not Q.isempty():
-        u = Q.dequeue()
+    while len(Q) != 0:
+        u = Q.pop()
         d = dist[u] + 1
-        neighbours = graph.neighbours(u)
+        
+        # Avoid function call overhead
+        neighbours = graph.adj[graph.ind[u]:graph.ind[u+1]]
 
         # Vectorizing this results in worse performance
         for parent in parents[u]:
@@ -49,7 +48,7 @@ def altbfs(graph, source, target=None):
             elif d < dist[neighbour]:
                 dist[neighbour] = d
                 parents[neighbour] = [u]
-                Q.enqueue(neighbour)
+                Q.appendleft(neighbour)
             else:
                 parents[neighbour].append(u)
     

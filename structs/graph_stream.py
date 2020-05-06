@@ -1,7 +1,10 @@
 import numpy as np
+
 from structs.disjointset import DisjointSet
 
+
 class GraphStream:
+    
     def __init__(self, path):
         self.path = path
         self.open()
