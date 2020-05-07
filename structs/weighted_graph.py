@@ -1,3 +1,4 @@
+from array import array
 from json import load
 
 import numpy as np
@@ -30,13 +31,13 @@ class WeightedGraph(Graph):
 
     @staticmethod
     def _parse(graph):
-        adj = np.array([v for adj in graph.values() for v in adj[0]],
-        dtype='u4')
-        weights = np.array([w for adj in graph.values() for w in adj[1]],
-        dtype='f8')
-        ind = np.cumsum(np.array([0] + [len(adj[0]) for adj in graph.values()]),
-        dtype='u4')
-        return (ind.size - 1, adj.size, adj, ind, weights)
+        adj = array('I', np.array([v for adj in graph.values() for v in adj[0]],
+        dtype='u4'))
+        weights = array('d', np.array([w for adj in graph.values() for w in adj
+        [1]], dtype='f8'))
+        ind = array('I', np.cumsum(np.array([0] + [len(adj[0]) for adj in graph.
+        values()]), dtype='u4'))
+        return (len(ind) - 1, len(adj), adj, ind, weights)
     
     def __iter__(self):
         self.i, self.j = 0, 0

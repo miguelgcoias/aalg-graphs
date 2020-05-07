@@ -1,6 +1,7 @@
-import numpy as np
-
+from array import array
 from collections import deque
+
+import numpy as np
 
 
 def bfs_mpaths(graph, source, target=None):
@@ -15,17 +16,19 @@ def bfs_mpaths(graph, source, target=None):
     inf = np.iinfo(np.int32).max
 
     # Store distances (levels)
-    dist = np.full(graph.order(), inf, dtype='u4')
+    dist = array('I', np.full(graph.order(), inf, dtype='u4'))
     dist[source] = 0
 
     # Number of shortest paths from source to computed vertices
-    sigma = np.zeros(graph.order(), dtype='u4')
+    sigma = array('I', np.zeros(graph.order(), dtype='u4'))
     sigma[source] = 1
 
-    # Store parents of computed vertices
+    # Store parents of computed vertices; due to using objects this needs to be 
+    # a NumPy array
     parents = np.empty(graph.order(), dtype='O')
     parents[source] = []
 
+    # Initialize queue
     Q = deque([source])
 
     while len(Q) != 0:
@@ -33,7 +36,7 @@ def bfs_mpaths(graph, source, target=None):
         d = dist[u] + 1
         
         # Avoid function call overhead
-        neighbours = graph.adj[graph.ind[u]:graph.ind[u+1]]
+        neighbours = graph.adj[graph.ind[u]:graph.ind[u + 1]]
 
         # Vectorizing this results in worse performance
         for parent in parents[u]:
