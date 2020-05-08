@@ -1,16 +1,19 @@
 import numpy as np
+
 from structs.disjointset import DisjointSet
 from structs.graph import Graph
+
 
 def karger(G):
     num_runs = np.ceil(2 + (G.order() * (G.order() - 1) * 
     np.log2(G.order())) / 2).astype(np.int64)
 
     min_cut = G.size() + 1
-    for i in range(num_runs):
+    for _ in range(num_runs):
         min_cut = min(min_cut, contract(G))
 
     return min_cut
+
 
 def contract(G):
     edges = np.array([e for e in G])
@@ -19,7 +22,7 @@ def contract(G):
 
     edge_idx = 0
 
-    for n in range(G.order() - 2):
+    for _ in range(G.order() - 2):
         # Contract graph
         while edge_idx < G.size():
             u, v = edges[order[edge_idx]]

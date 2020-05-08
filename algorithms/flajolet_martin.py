@@ -1,10 +1,12 @@
 import numpy as np
 
+
 def tail_length(x):
     n = np.int64(0)
     while x % 2 ** (n+1) == 0:
         n += 1
     return n
+
 
 def flajolet_martin(stream, hash_functions, group_size=1):
     k = len(hash_functions)

@@ -1,17 +1,21 @@
 import numpy as np
 from numpy.random import default_rng
 
-from algorithms.altbfs import altbfs
+from algorithms.bfs_mpaths import bfs_mpaths
 
 
 def diam2approx(graph):
+    '''Find 2-approximation of diameter of graph.
+    
+    Keyword arguments:
+    graph -- Graph or Digraph object'''
     # Random source vertex
     rng = default_rng()
     v = rng.integers(0, graph.order(), dtype='u4')
 
     # Run BFS for a random vertex, and subtract 1 from depth array to obtain 
     # length of path
-    dist = altbfs(graph, v)[0]
+    dist, _, _ = bfs_mpaths(graph, v)
 
     # Maximum distance
     highest = np.amax(dist)

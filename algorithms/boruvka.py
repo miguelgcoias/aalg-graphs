@@ -1,9 +1,11 @@
 import numpy as np
-from structs.graph import Graph
-from structs.disjointset import DisjointSet
 
+from structs.disjointset import DisjointSet
+from structs.graph import Graph
+
+
+# Boruvka is broken, don't use
 def boruvka(G):
-    # Boruvka is still broken in its current state. For example, running with 'examples/undirected.json' does not return the full MST
     n, m = G.order(), G.size()
     edges = [e for e in G]
     ds = DisjointSet(n)

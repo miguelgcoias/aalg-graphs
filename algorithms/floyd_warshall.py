@@ -1,5 +1,7 @@
 import numpy as np
+
 from structs.graph import Graph
+
 
 def floyd_warshall(G, weighted=False):
     infinity = np.iinfo(np.int32).max

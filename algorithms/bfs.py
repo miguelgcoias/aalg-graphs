@@ -1,6 +1,7 @@
 import numpy as np
 
-def BFS(graph, source):
+
+def bfs(graph, source):
     infinity = np.iinfo(np.int32).max
 
     n = graph.order()
