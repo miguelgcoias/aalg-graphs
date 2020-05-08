@@ -12,7 +12,7 @@ args = {'ylabel': 'Runtime (s)',
 
 # Find graphs to test
 graph_paths = []
-for g in os.listdir('./examples'):
+for g in os.listdir('./examples/undirected'):
     if g.endswith('.json'):
         graph_paths.append(g)
 
@@ -25,7 +25,7 @@ n_runs, n_repeats = int(sys.argv[1]), int(sys.argv[2])
 # Run the algorithm
 for idx, g in enumerate(graph_paths):
     print(g.upper())
-    graph = Graph('examples/' + g)
+    graph = Graph('examples/undirected/' + g)
     sizes[idx] = graph.order() * (graph.order() + graph.size())
     times[idx] = measure(apl, graph, n_runs=n_runs, n_repeats=n_repeats)
 
