@@ -16,6 +16,7 @@ def diam2approx(graph):
     # Run BFS for a random vertex, and subtract 1 from depth array to obtain 
     # length of path
     dist, _, _ = bfs_mpaths(graph, v)
+    dist = np.array(dist)
 
     # Maximum distance
     highest = np.amax(dist)

@@ -23,7 +23,7 @@ def bfs_mpaths(graph, source, target=None):
     sigma = array('I', np.zeros(graph.order(), dtype='u4'))
     sigma[source] = 1
 
-    # Store parents of computed vertices; due to using objects this needs to be 
+    # Store parents of computed vertices; due to using lists this needs to be 
     # a NumPy array
     parents = np.empty(graph.order(), dtype='O')
     parents[source] = []
