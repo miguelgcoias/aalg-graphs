@@ -2,13 +2,14 @@ import numpy as np
 
 b = 5
 p = 2 ** b
+mask = 2 ** b - 1
 alpha = 0.697
 
 def hyper_ball(graph, hash_functions):
     n = graph.order()
 
     distance_sum = 0
-    counters = [np.zeros(p, dtype=np.uint8) for j in range(n)]
+    counters = [np.zeros(p, dtype=np.uint32) for j in range(n)]
 
     #TODO
     h = hash_functions[0]
@@ -30,7 +31,7 @@ def hyper_ball(graph, hash_functions):
 def size(counter):
     ret = 0
     for j in range(p):
-        ret += 2 ** -int(counter[j])
+        ret += 2 ** -counter[j]
 
     ret = alpha * p**2 / ret
     return ret
@@ -40,12 +41,12 @@ def union(counter1, counter2):
         counter1[i] = max(counter1[i], counter2[i])
 
 def add(counter, x):
-    idx = x >> (32 - b)
-    counter[idx] = max(counter[idx], leading_zeros(x, left=32-b))
+    idx = x & mask
+    counter[idx] = max(counter[idx], zeros(x >> b))
 
-def leading_zeros(x, left=32, right=0):
-    for i in range(left, right, -1):
-        if x & 2 ** i != 0:
-            return (left-i) + 1
-
-    return (left-right) + 1
+def zeros(x, max_bits=32-b):
+    ret = 1
+    while x & 1 == 0 and ret <= max_bits:
+        ret += 1
+        x >>= 1
+    return ret
