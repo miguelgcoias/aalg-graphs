@@ -5,7 +5,7 @@ p = 2 ** b
 mask = 2 ** b - 1
 alpha = 0.697
 
-def hyper_ball(graph, hash_functions):
+def hyperball(graph, hash_functions, eps=10**-9):
     n = graph.order()
 
     distance_sum = 0
@@ -16,8 +16,11 @@ def hyper_ball(graph, hash_functions):
 
     for v in range(n):
         add(counters[v], h(v))
+        print("LOL")
+        print(counters[v][0])
 
     for r in range(n):
+        print(r)
         for v in range(n):
             delta = -size(counters[v])
             for u in graph.neighbours(v):
@@ -25,8 +28,15 @@ def hyper_ball(graph, hash_functions):
             delta += size(counters[v])
             distance_sum += r * delta
 
+        if delta < eps:
+            break
+
     apl = distance_sum / (n * (n-1))
     return apl
+
+def union(counter1, counter2):
+    for i in range(p):
+        counter1[i] = max(counter1[i], counter2[i])
 
 def size(counter):
     ret = 0
@@ -35,10 +45,6 @@ def size(counter):
 
     ret = alpha * p**2 / ret
     return ret
-
-def union(counter1, counter2):
-    for i in range(p):
-        counter1[i] = max(counter1[i], counter2[i])
 
 def add(counter, x):
     idx = x & mask
