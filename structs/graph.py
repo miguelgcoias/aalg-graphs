@@ -24,13 +24,11 @@ class Graph:
         else:
             raise RuntimeError('Invalid input')
 
-
     @staticmethod
     def _parse(graph):
         # Python arrays are used instead of NumPy arrays for better performance
-        adj = array('I', np.array([v for adj in graph.values() for v in adj],
-        dtype='u4'))
-        ind = array('I', np.cumsum(np.array([0] + [len(adj) for adj in graph.values()]), dtype='u4'))
+        adj = array('I', [v for adj in graph.values() for v in adj])
+        ind = array('I', np.cumsum([0] + [len(l) for l in graph.values()]))
         return len(ind) - 1, len(adj), adj, ind
     
     def __iter__(self):
