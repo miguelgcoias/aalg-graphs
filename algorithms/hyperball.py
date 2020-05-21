@@ -1,34 +1,48 @@
-import numpy as np
+from time import time
+from array import array
+import multiprocessing as mp
 
 b = 5
 p = 2 ** b
 mask = 2 ** b - 1
 alpha = 0.697
 
-def hyperball(graph, hash_functions, eps=10**-9):
+def m_hyperball(graph, hash_functions):
+    ret = 0
+    pool = mp.Pool(processes=4)
+
+    start = time()
+    for x in pool.imap_unordered(hyperball, [[graph, h] for h in hash_functions]):
+        ret += x
+        print("{} : (Time elapsed: {}s)".format(x, int(time() - start)))
+
+    ret /= len(hash_functions)
+    return ret
+    
+
+def hyperball(data):
+    graph, h = data
     n = graph.order()
 
     distance_sum = 0
-    counters = [np.zeros(p, dtype=np.uint32) for j in range(n)]
-
-    #TODO
-    h = hash_functions[0]
+    counters = [[array('I', [0]*p) for j in range(n)] for i in range(2)]
 
     for v in range(n):
-        add(counters[v], h(v))
-        print("LOL")
-        print(counters[v][0])
+        add(counters[0][v], h(v))
 
     for r in range(n):
-        print(r)
+        delta = 0
         for v in range(n):
-            delta = -size(counters[v])
-            for u in graph.neighbours(v):
-                union(counters[v], counters[u])
-            delta += size(counters[v])
-            distance_sum += r * delta
+            a = counters[(r+1)%2][v]
+            union(a, counters[r%2][v])
 
-        if delta < eps:
+            for u in graph.neighbours(v):
+                union(a, counters[r%2][u])
+            delta += size(a) - size(counters[r%2][v])
+
+        distance_sum += r * delta
+
+        if delta == 0:
             break
 
     apl = distance_sum / (n * (n-1))
@@ -41,7 +55,7 @@ def union(counter1, counter2):
 def size(counter):
     ret = 0
     for j in range(p):
-        ret += 2 ** -counter[j]
+        ret += 2 ** -float(counter[j])
 
     ret = alpha * p**2 / ret
     return ret
