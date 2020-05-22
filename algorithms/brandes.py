@@ -4,7 +4,7 @@ from collections import deque
 import numpy as np
 
 
-def brandes(graph, procs_multiplier=1):
+def brandes(graph):
     '''Fully parallel implementation of Brandes' algorithm. The main problem is 
     that graph.order() arrays of length graph.order() must be stored in live 
     memory to achieve the best speeds possible; using locks on a shared bc 
@@ -14,40 +14,39 @@ def brandes(graph, procs_multiplier=1):
     Keyword arguments:
     graph -- Graph or Digraph object
     vertex -- vertex to estimate betwenness centrality'''
-    # Execute with multiple processes
-    procs = mp.cpu_count() * procs_multiplier
+    # This global hack is ugly, but it needs to be done since mpcompute must
+    # be able to modify this array
+    global bc
+    bc = mp.Array('d', [0 for _ in range(graph.order())])
+
+    procs = mp.cpu_count()
     with mp.Pool(processes=procs) as pool:
-        res = pool.starmap(mpcompute, [(graph, source) for source in
-        range(graph.order())])
+        pool.starmap(mpcompute, [(graph, src) for src in range(graph.order())])
     
-    bc = np.sum(res, axis=0)
     return np.array(bc, dtype='f8') / (graph.order() * (graph.order() - 1))
 
 
 def mpcompute(graph, source):
     inf = np.iinfo(np.int32).max
 
-    # Result for this process
-    bc_current = np.zeros(graph.order(), dtype='f8')
-
     # Store dependency scores
-    delta = np.zeros(graph.order(), dtype='f8')
+    delta = [0 for _ in range(graph.order())]
 
     # Store distances (levels)
-    dist = np.full(graph.order(), inf, dtype='u4')
+    dist = [inf for _ in range(graph.order())]
     dist[source] = 0
 
     # Number of shortest paths from source to computed vertices
-    sigma = np.zeros(graph.order(), dtype='u4')
+    sigma = [0 for _ in range(graph.order())]
     sigma[source] = 1
 
     # Store parents of computed vertices
-    parents = np.empty(graph.order(), dtype='O')
+    parents = [None for _ in range(graph.order())]
     parents[source] = []
 
-    # Initialize stack and queue
-    S = deque([])
+    # Initialize queue and stack
     Q = deque([source])
+    S = deque([])
 
     while len(Q) != 0:
         u = Q.pop()
@@ -55,7 +54,7 @@ def mpcompute(graph, source):
         d = dist[u] + 1
 
         # Avoid function call overhead
-        neighbours = graph.adj[graph.ind[u]:graph.ind[u+1]]
+        neighbours = graph.adj[graph.ind[u]:graph.ind[u + 1]]
 
         # Vectorizing this results in worse performance
         for parent in parents[u]:
@@ -76,6 +75,7 @@ def mpcompute(graph, source):
         for p in parents[v]:
             delta[p] += sigma[p] / sigma[v] * (1 + delta[v])
         if v != source:
-            bc_current[v] += delta[v]
-    
-    return bc_current
+            # This is not a very good idea. We don't care since we just want a
+            # correct version of Brandes which performs reasonably well
+            with bc.get_lock():
+                bc[v] += delta[v]

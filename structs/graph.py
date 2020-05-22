@@ -1,8 +1,6 @@
 from array import array
 from json import load
 
-import numpy as np
-
 
 class Graph:
 
@@ -22,15 +20,16 @@ class Graph:
             self.n, self.m, self.adj, self.ind = self._parse(data)
             self.m = int(self.m/2)
         else:
-            raise RuntimeError('Invalid input')
+            raise TypeError('Invalid input')
 
 
     @staticmethod
     def _parse(graph):
-        # Python arrays are used instead of NumPy arrays for better performance
-        adj = array('I', np.array([v for adj in graph.values() for v in adj],
-        dtype='u4'))
-        ind = array('I', np.cumsum(np.array([0] + [len(adj) for adj in graph.values()]), dtype='u4'))
+        adj = array('I', [v for adj in graph.values() for v in adj])
+        ind = array('I', [0])
+        ind.extend([len(adj) for adj in graph.values()])
+        for i in range(1, len(ind)):
+            ind[i] += ind[i - 1]
         return len(ind) - 1, len(adj), adj, ind
     
     def __iter__(self):
@@ -60,7 +59,7 @@ class Graph:
         
         Keyword arguments:
         v -- vertex to find neighbours of'''
-        return self.adj[self.ind[v]:self.ind[v+1]]
+        return self.adj[self.ind[v]:self.ind[v + 1]]
 
     def order(self):
         '''Return number of vertices.'''

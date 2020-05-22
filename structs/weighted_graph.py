@@ -1,8 +1,6 @@
 from array import array
 from json import load
 
-import numpy as np
-
 from structs.graph import Graph
 
 
@@ -26,18 +24,18 @@ class WeightedGraph(Graph):
                 self._parse(data)
             self.m = int(self.m/2)
         else:
-            raise RuntimeError('Invalid input')
+            raise TypeError('Invalid input')
 
 
     @staticmethod
     def _parse(graph):
-        adj = array('I', np.array([v for adj in graph.values() for v in adj[0]],
-        dtype='u4'))
-        weights = array('d', np.array([w for adj in graph.values() for w in adj
-        [1]], dtype='f8'))
-        ind = array('I', np.cumsum(np.array([0] + [len(adj[0]) for adj in graph.
-        values()]), dtype='u4'))
-        return (len(ind) - 1, len(adj), adj, ind, weights)
+        adj = array('I', [v for adj in graph.values() for v in adj])
+        weights = array('d', [w for adj in graph.values() for w in adj[1]])
+        ind = array('I', [0])
+        ind.extend([len(adj) for adj in graph.values()])
+        for i in range(1, len(ind)):
+            ind[i] += ind[i - 1]
+        return len(ind) - 1, len(adj), adj, ind, weights
     
     def __iter__(self):
         self.i, self.j = 0, 0
