@@ -22,7 +22,6 @@ class Graph:
         else:
             raise TypeError('Invalid input')
 
-
     @staticmethod
     def _parse(graph):
         adj = array('I', [v for adj in graph.values() for v in adj])
