@@ -1,7 +1,7 @@
 import multiprocessing as mp
+import random
 
 import numpy as np
-from numpy.random import default_rng
 
 from algorithms.bfs_mpaths import bfs_mpaths
 from algorithms.diam2approx import diam2approx
@@ -11,7 +11,7 @@ def vcbc(graph, epsilon, delta):
     '''Approximate betweenness centrality of all vertices of graph using the 
     VC-dimension algorithm from 'Fast Approximation of Betweenness Centrality 
     through Sampling' by Kornaropoulos and Riondato. For details, check their 
-    paper or our report for a simplified version.
+    paper or our report to understand the main ideas.
     
     Keyword arguments:
     graph -- Graph or Digraph object
@@ -22,39 +22,37 @@ def vcbc(graph, epsilon, delta):
 
     # Number of iterations
     r = np.ceil(0.5/epsilon**2 * (np.floor(np.log2(diam - 2)) + 1 \
-        - np.log(delta)))
+        - np.log(delta))).astype(float)
 
-    # pylint shows a ficticious error on line 32
-    # Check https://github.com/PyCQA/pylint/issues/3313
-    manager = mp.Manager()
-    bc = manager.Array('d', np.zeros(graph.order(), dtype='f8'))
-    lock = manager.Lock()
+    # This global hack is ugly, but it needs to be done since mpcompute must
+    # be able to modify this array
+    global bc
+    bc = mp.Array('d', [0 for _ in range(graph.order())])
 
-    # Execute with multiple processes
     procs = mp.cpu_count()
     with mp.Pool(processes=procs) as pool:
-        pool.starmap(mpcompute, r.astype(int) * [(graph, bc, lock, r)])
+        pool.starmap(mpcompute, int(r) * [(graph, r)])
 
+    # Return as NumPy array?
     return np.array(bc, dtype='f8')
 
 
-def mpcompute(graph, bc, lock, r):
-    # Chosen vertices
+def mpcompute(graph, r):
+    # Vertices whose BC score is to be increased by 1/r go here
     chosen = list()
     
-    # Randomly select two distinct vertices
-    rng = default_rng()
-    u, v = rng.choice(graph.order(), size=2, replace=False, shuffle=False)
+    u, v = random.sample(range(graph.order()), 2)
     _, preds, sigma = bfs_mpaths(graph, u, v)
 
     t = v
     while t != u:
         prob = [sigma[k]/sigma[t] for k in preds[t]]
-        z = rng.choice(preds[t], p=prob)
+        # The [0] is necessary because choices always returns a list
+        z = random.choices(preds[t], weights=prob)[0]
         if z != u:
             chosen.append(z)
         t = z
     
-    with lock:
+    with bc.get_lock():
         for v in chosen:
-            bc[v] += r**(-1)
+            bc[v] += 1/r

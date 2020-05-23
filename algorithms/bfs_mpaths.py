@@ -13,19 +13,19 @@ def bfs_mpaths(graph, source, target=None):
     source -- source vertex
     target -- stop searching once target is reached. Default is None, in which 
     case the algorithm runs on the entire graph'''
+    # Can this be removed, or done in another way?
     inf = np.iinfo(np.int32).max
 
     # Store distances (levels)
-    dist = array('I', np.full(graph.order(), inf, dtype='u4'))
+    dist = [inf for _ in range(graph.order())]
     dist[source] = 0
 
     # Number of shortest paths from source to computed vertices
-    sigma = array('I', np.zeros(graph.order(), dtype='u4'))
+    sigma = [0 for _ in range(graph.order())]
     sigma[source] = 1
 
-    # Store parents of computed vertices; due to using lists this needs to be 
-    # a NumPy array
-    parents = np.empty(graph.order(), dtype='O')
+    # Store parents of computed vertices
+    parents = [None for _ in range(graph.order())]
     parents[source] = []
 
     # Initialize queue

@@ -1,7 +1,5 @@
 from json import load
 
-import numpy as np
-
 from structs.weighted_graph import WeightedGraph
 
 
