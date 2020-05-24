@@ -26,7 +26,7 @@ class Graph:
     def _parse(graph):
         adj = array('I', [v for adj in graph.values() for v in adj])
         ind = array('I', [0])
-        ind.extend([len(adj) for adj in graph.values()])
+        ind.extend([len(aux) for aux in graph.values()])
         for i in range(1, len(ind)):
             ind[i] += ind[i - 1]
         return len(ind) - 1, len(adj), adj, ind
