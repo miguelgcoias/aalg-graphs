@@ -1,3 +1,4 @@
+import random
 from time import time
 from array import array
 import multiprocessing as mp
@@ -5,32 +6,61 @@ import multiprocessing as mp
 b = 5
 p = 2 ** b
 mask = 2 ** b - 1
-alpha = 0.697
+alpha = 0.697 #0.7213/(1 + 1.079/p)
 
-def m_hyperball(graph, hash_functions):
-    ret = 0
+def m_hyperball(graph, hash_functions, debug=False):
+    ret = []
     pool = mp.Pool(processes=4)
 
     start = time()
     for x in pool.imap_unordered(hyperball, [[graph, h] for h in hash_functions]):
-        ret += x
-        print("{} : (Time elapsed: {}s)".format(x, int(time() - start)))
+        ret += [x]
+        if debug:
+            print("{} : (Time elapsed: {}s)".format(x, int(time() - start)))
+        else:
+            print(x)
 
-    ret /= len(hash_functions)
     return ret
-    
 
-def hyperball(data):
+def i_hyperball(graph):
+    i = 0
+    sumcum = 0
+    while True:
+        random.seed(time())
+        h = lambda x: random.randint(0, 2** 32)
+
+        apl = hyperball((graph, h))
+
+        i += 1
+        sumcum += apl
+        print("=Current estimation: {}\n=Current average: {}".format(apl, sumcum/i))
+        x = raw_input("")
+
+def hyperball(data, debug=False):
     graph, h = data
     n = graph.order()
 
     distance_sum = 0
+
+    if debug:
+        print("Allocating {} counters of size {}".format(2*n, p))
+
     counters = [[array('I', [0]*p) for j in range(n)] for i in range(2)]
 
-    for v in range(n):
-        add(counters[0][v], h(v))
+    if debug:
+        print("DONE")
+        print("Initializing counters")
 
-    for r in range(n):
+    for v in range(n):
+        add(counters[1][v], h(v))
+
+    if debug:
+        print("DONE")
+
+    for r in range(1, n):
+        if debug:
+            print(" == R:{} | distance_sum:{} == ".format(r, distance_sum))
+
         delta = 0
         for v in range(n):
             a = counters[(r+1)%2][v]
