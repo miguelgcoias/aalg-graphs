@@ -24,6 +24,7 @@ class Graph:
 
     @staticmethod
     def _parse(graph):
+        # Implicitly relies on the dict ordering to work
         adj = array('I', [v for adj in graph.values() for v in adj])
         ind = array('I', [0])
         ind.extend([len(aux) for aux in graph.values()])
@@ -38,7 +39,7 @@ class Graph:
     def __next__(self):
         if self.i < self.n:
             pairs = self.neighbours(self.i)
-            if self.j < pairs.size:
+            if self.j < len(pairs):
                 if self.i <= pairs[self.j]:
                     edge = (self.i, pairs[self.j])
                     self.j += 1

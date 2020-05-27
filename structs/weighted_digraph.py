@@ -26,7 +26,7 @@ class WeightedDigraph(WeightedGraph):
     def __next__(self):
         if self.i < self.n:
             pairs, weights = self.neighbours(self.i)
-            if self.j < pairs.size:
+            if self.j < len(pairs):
                 edge = (self.i, pairs[self.j], weights[self.j])
                 self.j += 1
                 return edge

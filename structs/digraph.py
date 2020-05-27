@@ -24,7 +24,7 @@ class Digraph(Graph):
     def __next__(self):
         if self.i < self.n:
             pairs = self.neighbours(self.i)
-            if self.j < pairs.size:
+            if self.j < len(pairs):
                 edge = (self.i, pairs[self.j])
                 self.j += 1
                 return edge

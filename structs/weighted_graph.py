@@ -29,6 +29,7 @@ class WeightedGraph(Graph):
 
     @staticmethod
     def _parse(graph):
+        # Implicitly relies on the dict ordering to work
         adj = array('I', [v for adj in graph.values() for v in adj])
         weights = array('d', [w for adj in graph.values() for w in adj[1]])
         ind = array('I', [0])
@@ -44,7 +45,7 @@ class WeightedGraph(Graph):
     def __next__(self):
         if self.i < self.n:
             pairs, weights = self.neighbours(self.i)
-            if self.j < pairs.size:
+            if self.j < len(pairs):
                 if self.i <= pairs[self.j]:
                     edge = (self.i, pairs[self.j], weights[self.j])
                     self.j += 1
