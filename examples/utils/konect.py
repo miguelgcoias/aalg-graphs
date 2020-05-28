@@ -18,7 +18,7 @@ def konect(path, n, dump_path=None):
             if line[0] == '%':
                 continue
             else:
-                start, end = line.split()
+                start, end = line.split()[:2]
                 graph_dict[int(start) - 1].append(int(end) - 1)
                 graph_dict[int(end) - 1].append(int(start) - 1)
     
