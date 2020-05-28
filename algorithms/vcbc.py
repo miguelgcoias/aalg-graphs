@@ -24,11 +24,14 @@ def vcbc(graph, epsilon, delta):
     r = np.ceil(0.5/epsilon**2 * (np.floor(np.log2(diam - 2)) + 1 \
         - np.log(delta))).astype(float)
 
-    # This global hack is ugly, but it needs to be done since mpcompute must
-    # be able to modify this array
+    # This global hack needs to be done, since mpcompute must inherit this array
     global bc
     bc = mp.Array('d', [0 for _ in range(graph.order())])
 
+    # On Windows platforms, spawning a process will not inherit bc. The way around
+    # this is to use multiprocessing.shared_memory, but this is only available on
+    # Python 3.8 and PyPy is based on 3.6, so the code isn't going to work with
+    # Windows.
     procs = mp.cpu_count()
     with mp.Pool(processes=procs) as pool:
         pool.starmap(mpcompute, int(r) * [(graph, r)])
