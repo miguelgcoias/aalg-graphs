@@ -11,7 +11,6 @@ def average_path_length(graph, algorithm='bfs'):
 
     ret = 0
     for v in range(n):
-        print(v)
         if algorithm == 'Bellman_Ford':
             dist, _ = bellman_ford(graph, v)
         else: # algorithm == 'bfs'

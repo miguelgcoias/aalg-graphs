@@ -30,7 +30,7 @@ def hash32shift(x):
     x = x ^ (x >> 4)
     x = (x * 2057) & mask
 
-def mix(a, b, c):
+def mix(c, a, b):
   a = a-b
   a = a-c
   a = a ^ (c >> 13)

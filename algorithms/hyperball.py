@@ -17,24 +17,8 @@ def m_hyperball(graph, hash_functions, debug=False):
         ret += [x]
         if debug:
             print("{} : (Time elapsed: {}s)".format(x, int(time() - start)))
-        else:
-            print(x)
 
     return ret
-
-def i_hyperball(graph):
-    i = 0
-    sumcum = 0
-    while True:
-        random.seed(time())
-        h = lambda x: random.randint(0, 2** 32)
-
-        apl = hyperball((graph, h))
-
-        i += 1
-        sumcum += apl
-        print("=Current estimation: {}\n=Current average: {}".format(apl, sumcum/i))
-        x = raw_input("")
 
 def hyperball(data, debug=False):
     graph, h = data
