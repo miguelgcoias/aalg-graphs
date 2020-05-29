@@ -13,6 +13,6 @@ if __name__ == '__main__':
             graph = Graph('examples/random_worst_case/' + graph_path)
 
             start = time()
-            l = hyperball((graph, jenkins32))
+            hyperball((graph, jenkins32))
 
             print('{} {} {}'.format(graph.order(),int(name[2]), time()-start))
