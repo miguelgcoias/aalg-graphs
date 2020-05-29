@@ -60,6 +60,7 @@ h = [hash_family[idx2]() for x in range(700)]
 
 m = m_hyperball(graph, h, debug=True)
 
+#NOTICE that this will only append, please enter a new file
 f = open(sys.argv[1], 'a')
 
 for x in m:
