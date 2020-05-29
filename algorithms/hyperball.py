@@ -12,10 +12,13 @@ def m_hyperball(graph, hash_functions, debug=False):
     pool = mp.Pool(processes=4)
 
     start = time()
-    for x in pool.imap_unordered(hyperball, [[graph, h] for h in hash_functions]):
+    for x in pool.imap_unordered(hyperball, [[graph, h] for h in hash_functions], chunksize=4):
         ret += [x]
         if debug:
             print("{} : (Time elapsed: {}s)".format(x, int(time() - start)))
+
+    pool.close()
+    pool.join()
 
     return ret
 
