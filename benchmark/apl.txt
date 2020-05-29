@@ -55,5 +55,13 @@ APL_WORST_CASE
 
    Please pipe it's output to a file in order to parsed in the next stage
 
-3) python -m benchmark.worst_case_parser <path>
+3) python -m benchmark.worst_case_parse <path>
    where <path> is the path to a file with the output of the previous commas
+
+APL LARGE GRAPHS
+----------------
+
+1) pypy3 -m benchmarks.apl_large_graphs
+   This should print to std. output the name of the graph being processed,
+   the mean value of 4 hyperball executions, the std deviation and the elapsed
+   time
