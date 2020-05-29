@@ -44,7 +44,7 @@ def get_colinear():
 
 graph_names = ['US Power Grid', 'PGP', 'random1', 'random2', 'random3']
 paths = ['examples/uspowergrid.json', 'examples/pgp.json',
-        'examples/26988_314915_5.json', 'examples/37129_301192_6.json', 'examples/49056_416086_6.json']
+        'examples/random/26988_314915_5.json', 'examples/random/37129_301192_6.json', 'examples/random/49056_416086_6.json']
 
 hash_names = ['RANDOM', 'URANDOM', 'LINEAR', 'MIX', 'COLINEAR']
 hash_family = [random, urandom, get_linear, get_mix, get_colinear]
@@ -56,12 +56,12 @@ graph_name = graph_names[idx1]
 graph = Graph(paths[idx1])
 
 h_name = hash_names[idx2]
-h = hash_family[idx2]()
+h = [hash_family[idx2]() for x in range(700)]
+
+m = m_hyperball(graph, h, debug=True)
 
 f = open(sys.argv[1], 'a')
 
-for i in range(700):
-    print(i)
-    h = hash_family[idx2]()
-    f.write(str(hyperball((graph,h))))
+for x in m:
+    f.write(str(x))
     f.write('\n')
