@@ -1,0 +1,59 @@
+All of the following commands are executedfrom the home directory of the project
+
+APL_HASH_TEST
+-------------
+
+1) pypy3 -m benchmark.apl_hash_test <path>
+   where <path> is the path to the file to be created with results of applying
+   your choice of hash functions to your choice of graph.
+
+2) Enter a number for the graph desired, and then one for the family to be tested.
+   
+   Graphs
+   ------
+   0 - US Power Grid   
+   1 - PGP
+   2 - 26988_314915_5
+   3 - 37129_301192_6
+   4 - 49056_416086_6
+
+   Hash Families
+   -------------
+   0 - RANDOM
+   1 - URANDOM
+   2 - LINEAR
+   3 - MIX
+   4 - COLINEAR
+
+   The resulting file should now have 700 entries.
+
+3) pypy3 -m benchmark.stats <path>
+   where <path> is the path to the dump of the previous function
+   
+   This is should print in the standard output both the mean of the values in
+   the file and their variance.
+
+APL_WORST_CASE
+--------------
+
+1) sage examples/utils/generate.sage <path>
+   where <path> is the relative path to the folder where the random graphs
+   will be stored.
+   NOTE: there should be no trailing / in <path>
+
+2) pypy3 -m benchmark.apl_worst_case
+   this will retrieve the graphs from 'examples/random_worst_case', please
+   store the graphs you which to test in this location
+   NOTE: the names of the graphs in this folder must be encoded as
+         <order>_<size>_<diameter>.json
+
+   This will print to the standard output in the following format:
+         <order> <diameter> <time>
+   Where time is time it took to run hyperball on that graph.
+   The choice of hash function does not matter for the runtime so it fixed as 
+   jenkins32
+
+   Please pipe it's output to a file in order to parsed in the next stage
+
+3) python -m benchmark.worst_case_parser <path>
+   where <path> is the path to a file with the output of the previous commas
