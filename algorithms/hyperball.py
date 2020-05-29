@@ -1,4 +1,3 @@
-import random
 from time import time
 from array import array
 import multiprocessing as mp
@@ -17,6 +16,9 @@ def m_hyperball(graph, hash_functions, debug=False):
         ret += [x]
         if debug:
             print("{} : (Time elapsed: {}s)".format(x, int(time() - start)))
+
+    pool.close()
+    pool.join()
 
     return ret
 
