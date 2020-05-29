@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 m = [[] for i in range(7)]
 t = [[] for i in range(7)]
 
-
 log_path = sys.argv[1] # path to a file with the output of apl_worst_case
 
 with open(log_path) as f:
@@ -16,8 +15,8 @@ with open(log_path) as f:
         if(d > 6):
             d = 0
 
-        m[d] += [int(l[0]) ** 2]
-        t[d] += [float(l[2])]
+        m[d] += [int(l[0]) ** 2] # V^2
+        t[d] += [float(l[2])]    # time
 
 plt.xlabel('$V^2$', useTex=True)
 plt.ylabel('Time [s]')
