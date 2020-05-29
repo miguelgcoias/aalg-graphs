@@ -1,4 +1,3 @@
-import random
 from time import time
 from array import array
 import multiprocessing as mp
